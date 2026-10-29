@@ -191,7 +191,7 @@ function showTrack(t) {
   curTitle = t.title;
   lrc = null;
   curIdx = -1;
-  U.lines.innerHTML = '';
+  while (U.lines.firstChild) U.lines.removeChild(U.lines.firstChild);
   step = 's1'; U.lines.style.transform = 'translateY(0)';
   step = 's2'; U.none.style.display = 'none';
   U.titleEl.textContent = t.title;
