@@ -16,8 +16,9 @@ JSON.parse = function () {
       lastId = d.videoId;
       tracks[d.videoId] = {
         id: d.videoId,
-        title: d.title,
-        artist: (d.author || '').replace(/ - Topic$/, ''),
+        keys: Object.keys(d).join(',') + '|' + Object.keys(mf || {}).join(','),
+        title: d.title || (mf && mf.title && (mf.title.simpleText || (mf.title.runs && mf.title.runs[0].text))),
+        artist: (d.author || (mf && mf.ownerChannelName) || '').replace(/ - Topic$/, ''),
         duration: parseInt(d.lengthSeconds, 10) || 0,
         isMusic,
         isSong: d.musicVideoType === 'MUSIC_VIDEO_TYPE_ATV',
@@ -222,7 +223,7 @@ function tick2() {
   if (curId !== id) showTrack(t);
   step = 'upd';
 
-  dbg('ytm v5 cur=' + curId + ' id=' + id + ' title=' + t.title + ' th=' + t.thumbs.length + ' on=' + U.root.style.display + ' lrc=' + (lrc ? lrc.length : lrc) + ' art=' + U.art.style.backgroundImage.slice(0, 60) + ' inDom=' + document.body.contains(U.root));
+  dbg('ytm v5 cur=' + curId + ' id=' + id + ' title=' + t.title + ' th=' + t.thumbs.length + '\n' + t.keys + ' on=' + U.root.style.display + ' lrc=' + (lrc ? lrc.length : lrc) + ' art=' + U.art.style.backgroundImage.slice(0, 60) + ' inDom=' + document.body.contains(U.root));
   const cur = v.currentTime || 0;
   const dur = v.duration || t.duration || 0;
   U.fill.style.width = dur ? Math.min(100, (cur / dur) * 100) + '%' : '0';
