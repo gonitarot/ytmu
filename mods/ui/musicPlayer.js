@@ -148,16 +148,41 @@ function getLyrics(t) {
     });
 }
 
+function txt(x) {
+  return x ? (x.simpleText || (x.runs && x.runs.map(function (r) { return r.text; }).join('')) || '') : '';
+}
+
+// Title/artist are stripped from the TV player response, so ask /next (same call the TV app makes).
 function loadMeta(t) {
-  if (t.title || t.metaTried) return Promise.resolve();
+  if (t.title || t.metaTried) return;
   t.metaTried = true;
-  return fetch('https://www.youtube.com/oembed?format=json&url=' + encodeURIComponent('https://www.youtube.com/watch?v=' + t.id))
-    .then(function (r) { return r.json(); })
-    .then(function (j) {
-      t.title = j.title;
-      t.artist = (j.author_name || '').replace(/ - Topic$/, '');
-    })
-    .catch(function (e) { t.metaErr = String(e && e.message); });
+  try {
+    const mappings = Object.values(window._yttv).find(function (a) { return a && a.mappings; });
+    const ident = mappings.get('CurrentIdentityService');
+    const client = mappings.get('KabukiInnerTubeClient');
+    ident.get().then(function (identity) {
+      client.fetch({
+        identity: identity,
+        isPrefetch: false,
+        path: '/youtubei/v1/next',
+        payload: { videoId: t.id, racyCheckOk: true, contentCheckOk: true, autonavState: 'STATE_NONE' },
+        clickTracking: { clickTrackingParams: null }
+      }).subscribe(function (resp) {
+        try {
+          const c = resp && resp.contents && resp.contents.singleColumnWatchNextResults && resp.contents.singleColumnWatchNextResults.results.results.contents;
+          const sec = c && c.find(function (i) { return i.itemSectionRenderer; });
+          const vm = sec && sec.itemSectionRenderer.contents.find(function (i) { return i.videoMetadataRenderer; });
+          const m = vm && vm.videoMetadataRenderer;
+          if (m) {
+            t.title = txt(m.title);
+            t.artist = txt(m.owner && m.owner.videoOwnerRenderer && m.owner.videoOwnerRenderer.title).replace(/ - Topic$/, '');
+          } else {
+            t.metaErr = 'no vmr ' + Object.keys(resp || {}).join(',');
+          }
+        } catch (e) { t.metaErr = 'parse ' + e.message; }
+      });
+    });
+  } catch (e) { t.metaErr = 'call ' + e.message; }
 }
 
 function showTrack(t) {
