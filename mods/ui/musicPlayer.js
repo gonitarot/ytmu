@@ -51,35 +51,35 @@ const CSS = `
 #ytm-st{position:absolute;right:5vw;top:4vh;font-size:2.4vh;color:rgba(255,255,255,.6)}
 `;
 
-let root, bg, art, cv, titleEl, artistEl, lyr, lines, none, fill, t0, t1, st;
+const U = {};
 let curId = null;
 let lrc = null;
 let curIdx = -1;
 let step = '';
 
 function build() {
-  if (root) return;
+  if (U.root) return;
   const style = document.createElement('style');
   style.textContent = CSS;
   document.head.appendChild(style);
-  root = document.createElement('div');
-  root.id = 'ytm-player';
-  root.innerHTML = '<div id="ytm-bg"></div><div id="ytm-shade"></div><div id="ytm-art"></div>' +
+  U.root = document.createElement('div');
+  U.root.id = 'ytm-player';
+  U.root.innerHTML = '<div id="ytm-bg"></div><div id="ytm-shade"></div><div id="ytm-art"></div>' +
     '<div id="ytm-meta"><div id="ytm-title"></div><div id="ytm-artist"></div></div>' +
     '<div id="ytm-lyr"><div id="ytm-lines"></div></div><div id="ytm-none"></div>' +
     '<div id="ytm-bar"><div id="ytm-fill"></div></div><div id="ytm-t0">0:00</div><div id="ytm-t1">0:00</div><div id="ytm-st"></div>';
-  document.body.appendChild(root);
-  bg = document.getElementById('ytm-bg');
-  art = document.getElementById('ytm-art');
-  titleEl = document.getElementById('ytm-title');
-  artistEl = document.getElementById('ytm-artist');
-  lyr = document.getElementById('ytm-lyr');
-  lines = document.getElementById('ytm-lines');
-  none = document.getElementById('ytm-none');
-  fill = document.getElementById('ytm-fill');
-  t0 = document.getElementById('ytm-t0');
-  t1 = document.getElementById('ytm-t1');
-  st = document.getElementById('ytm-st');
+  document.body.appendChild(U.root);
+  U.bg = document.getElementById('ytm-bg');
+  U.art = document.getElementById('ytm-art');
+  U.titleEl = document.getElementById('ytm-title');
+  U.artistEl = document.getElementById('ytm-artist');
+  U.lyr = document.getElementById('ytm-lyr');
+  U.lines = document.getElementById('ytm-lines');
+  U.none = document.getElementById('ytm-none');
+  U.fill = document.getElementById('ytm-fill');
+  U.t0 = document.getElementById('ytm-t0');
+  U.t1 = document.getElementById('ytm-t1');
+  U.st = document.getElementById('ytm-st');
 }
 
 function fmt(s) {
@@ -148,20 +148,20 @@ function showTrack(t) {
   curId = t.id;
   lrc = null;
   curIdx = -1;
-  lines.innerHTML = '';
-  step = 's1'; lines.style.transform = 'translateY(0)';
-  step = 's2'; none.style.display = 'none';
-  titleEl.textContent = t.title;
-  artistEl.textContent = t.artist;
+  U.lines.innerHTML = '';
+  step = 's1'; U.lines.style.transform = 'translateY(0)';
+  step = 's2'; U.none.style.display = 'none';
+  U.titleEl.textContent = t.title;
+  U.artistEl.textContent = t.artist;
   step = 's3';
-  art.style.backgroundImage = 'url(' + artUrl(t, 1920) + ')';
+  U.art.style.backgroundImage = 'url(' + artUrl(t, 1920) + ')';
   step = 's4';
-  bg.style.backgroundImage = 'url(' + artUrl(t, 64) + ')';
+  U.bg.style.backgroundImage = 'url(' + artUrl(t, 64) + ')';
   getLyrics(t).then(function (res) {
     if (curId !== t.id) return;
     if (!res) {
-      none.textContent = 'Sin letra sincronizada';
-      none.style.display = 'block';
+      U.none.textContent = 'Sin letra sincronizada';
+      U.none.style.display = 'block';
       return;
     }
     lrc = res;
@@ -172,7 +172,7 @@ function showTrack(t) {
       d.textContent = l.s || '♪';
       frag.appendChild(d);
     });
-    lines.appendChild(frag);
+    U.lines.appendChild(frag);
   });
 }
 
@@ -193,7 +193,7 @@ function dbg(txt) {
 }
 
 function tick() {
-  try { tick2(); } catch (e) { dbg('ERR@' + step + ' ' + e.message + ' [' + [typeof root, typeof bg, typeof art, typeof lyr, typeof lines, typeof none, typeof fill, typeof t0, typeof t1, typeof st].join(',') + ']' + '\n' + String(e.stack).slice(0, 300)); }
+  try { tick2(); } catch (e) { dbg('ERR@' + step + ' ' + e.message + ' [' + [typeof U.root, typeof U.bg, typeof U.art, typeof U.lyr, typeof U.lines, typeof U.none, typeof U.fill, typeof U.t0, typeof U.t1, typeof U.st].join(',') + ']' + '\n' + String(e.stack).slice(0, 300)); }
 }
 
 function tick2() {
@@ -209,35 +209,35 @@ function tick2() {
   } catch (e) { }
   const watching = v && t && t.isMusic && full;
   if (!watching) {
-    if (root && root.className === 'on') root.className = '';
+    if (U.root && U.root.className === 'on') U.root.className = '';
     return;
   }
   step = 'build';
   build();
   step = 'on';
-  if (root.className !== 'on') root.className = 'on';
+  if (U.root.className !== 'on') U.root.className = 'on';
   step = 'show';
   if (curId !== id) showTrack(t);
   step = 'upd';
 
-  dbg('ytm v3 on=' + root.className + ' lrc=' + (lrc ? lrc.length : lrc) + ' art=' + art.style.backgroundImage.slice(0, 60) + ' inDom=' + document.body.contains(root));
+  dbg('ytm v3 on=' + U.root.className + ' lrc=' + (lrc ? lrc.length : lrc) + ' art=' + U.art.style.backgroundImage.slice(0, 60) + ' inDom=' + document.body.contains(U.root));
   const cur = v.currentTime || 0;
   const dur = v.duration || t.duration || 0;
-  fill.style.width = dur ? Math.min(100, (cur / dur) * 100) + '%' : '0';
-  t0.textContent = fmt(cur);
-  t1.textContent = fmt(dur);
-  st.textContent = v.paused ? '❚❚  Pausa' : '';
+  U.fill.style.width = dur ? Math.min(100, (cur / dur) * 100) + '%' : '0';
+  U.t0.textContent = fmt(cur);
+  U.t1.textContent = fmt(dur);
+  U.st.textContent = v.paused ? '❚❚  Pausa' : '';
 
   if (lrc) {
     let idx = -1;
     for (let i = 0; i < lrc.length; i++) { if (lrc[i].t <= cur + 0.25) idx = i; else break; }
     if (idx !== curIdx) {
       curIdx = idx;
-      const els = lines.children;
+      const els = U.lines.children;
       for (let i = 0; i < els.length; i++) els[i].className = 'ytm-l' + (i === idx ? ' cur' : i < idx ? ' past' : '');
       if (idx >= 0 && els[idx]) {
-        const target = lyr.clientHeight * 0.4 - (els[idx].offsetTop + els[idx].offsetHeight / 2);
-        lines.style.transform = 'translateY(' + Math.round(target) + 'px)';
+        const target = U.lyr.clientHeight * 0.4 - (els[idx].offsetTop + els[idx].offsetHeight / 2);
+        U.lines.style.transform = 'translateY(' + Math.round(target) + 'px)';
       }
     }
   }
