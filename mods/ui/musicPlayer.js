@@ -51,6 +51,7 @@ const COL = { cur: '#fff', past: 'rgba(255,255,255,.4)', next: 'rgba(255,255,255
 
 const U = {};
 let curId = null;
+let curTitle = null;
 let lrc = null;
 let curIdx = -1;
 let step = '';
@@ -147,8 +148,21 @@ function getLyrics(t) {
     });
 }
 
+function loadMeta(t) {
+  if (t.title || t.metaTried) return Promise.resolve();
+  t.metaTried = true;
+  return fetch('https://www.youtube.com/oembed?format=json&url=' + encodeURIComponent('https://www.youtube.com/watch?v=' + t.id))
+    .then(function (r) { return r.json(); })
+    .then(function (j) {
+      t.title = j.title;
+      t.artist = (j.author_name || '').replace(/ - Topic$/, '');
+    })
+    .catch(function (e) { t.metaErr = String(e && e.message); });
+}
+
 function showTrack(t) {
   curId = t.id;
+  curTitle = t.title;
   lrc = null;
   curIdx = -1;
   U.lines.innerHTML = '';
@@ -157,9 +171,9 @@ function showTrack(t) {
   U.titleEl.textContent = t.title;
   U.artistEl.textContent = t.artist;
   step = 's3';
-  U.art.style.backgroundImage = 'url(' + artUrl(t, 1920) + ')';
+  U.art.style.backgroundImage = 'url("' + artUrl(t, 1920) + '")';
   step = 's4';
-  U.bg.style.backgroundImage = 'url(' + artUrl(t, 64) + ')';
+  U.bg.style.backgroundImage = 'url("' + artUrl(t, 64) + '")';
   getLyrics(t).then(function (res) {
     if (curId !== t.id) return;
     if (!res) {
@@ -220,10 +234,11 @@ function tick2() {
   step = 'on';
   if (U.root.style.display !== 'block') U.root.style.display = 'block';
   step = 'show';
-  if (curId !== id) showTrack(t);
+  if (!t.title && !t.metaTried) loadMeta(t);
+  if (curId !== id || (t.title && curTitle !== t.title)) showTrack(t);
   step = 'upd';
 
-  dbg('ytm v5 cur=' + curId + ' id=' + id + ' title=' + t.title + ' th=' + t.thumbs.length + '\n' + t.keys + ' on=' + U.root.style.display + ' lrc=' + (lrc ? lrc.length : lrc) + ' art=' + U.art.style.backgroundImage.slice(0, 60) + ' inDom=' + document.body.contains(U.root));
+  dbg('ytm v5 cur=' + curId + ' id=' + id + ' title=' + t.title + ' th=' + t.thumbs.length + ' ' + (t.thumbs[0] && t.thumbs[0].url.slice(0, 60)) + ' err=' + t.metaErr + '\n' + t.keys + ' on=' + U.root.style.display + ' lrc=' + (lrc ? lrc.length : lrc) + ' art=' + U.art.style.backgroundImage.slice(0, 60) + ' inDom=' + document.body.contains(U.root));
   const cur = v.currentTime || 0;
   const dur = v.duration || t.duration || 0;
   U.fill.style.width = dur ? Math.min(100, (cur / dur) * 100) + '%' : '0';
