@@ -64,22 +64,28 @@ function build() {
   document.head.appendChild(style);
   U.root = document.createElement('div');
   U.root.id = 'ytm-player';
-  U.root.innerHTML = '<div id="ytm-bg"></div><div id="ytm-shade"></div><div id="ytm-art"></div>' +
-    '<div id="ytm-meta"><div id="ytm-title"></div><div id="ytm-artist"></div></div>' +
-    '<div id="ytm-lyr"><div id="ytm-lines"></div></div><div id="ytm-none"></div>' +
-    '<div id="ytm-bar"><div id="ytm-fill"></div></div><div id="ytm-t0">0:00</div><div id="ytm-t1">0:00</div><div id="ytm-st"></div>';
+  const mk = function (id, parent, text) {
+    const e = document.createElement('div');
+    e.id = id;
+    if (text) e.textContent = text;
+    parent.appendChild(e);
+    return e;
+  };
+  U.bg = mk('ytm-bg', U.root);
+  mk('ytm-shade', U.root);
+  U.art = mk('ytm-art', U.root);
+  const meta = mk('ytm-meta', U.root);
+  U.titleEl = mk('ytm-title', meta);
+  U.artistEl = mk('ytm-artist', meta);
+  U.lyr = mk('ytm-lyr', U.root);
+  U.lines = mk('ytm-lines', U.lyr);
+  U.none = mk('ytm-none', U.root);
+  const bar = mk('ytm-bar', U.root);
+  U.fill = mk('ytm-fill', bar);
+  U.t0 = mk('ytm-t0', U.root, '0:00');
+  U.t1 = mk('ytm-t1', U.root, '0:00');
+  U.st = mk('ytm-st', U.root);
   document.body.appendChild(U.root);
-  U.bg = document.getElementById('ytm-bg');
-  U.art = document.getElementById('ytm-art');
-  U.titleEl = document.getElementById('ytm-title');
-  U.artistEl = document.getElementById('ytm-artist');
-  U.lyr = document.getElementById('ytm-lyr');
-  U.lines = document.getElementById('ytm-lines');
-  U.none = document.getElementById('ytm-none');
-  U.fill = document.getElementById('ytm-fill');
-  U.t0 = document.getElementById('ytm-t0');
-  U.t1 = document.getElementById('ytm-t1');
-  U.st = document.getElementById('ytm-st');
 }
 
 function fmt(s) {
