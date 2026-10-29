@@ -174,6 +174,16 @@ function domLeaves() {
   return out.join(' ; ');
 }
 
+// Title/artist are stripped from the TV player response; read them from the native player UI.
+function domMeta() {
+  const wp = document.querySelector('ytlr-watch-page');
+  if (!wp) return null;
+  const f = wp.querySelectorAll('yt-formatted-string');
+  const a = f[0] && f[0].textContent.trim();
+  const b = f[1] && f[1].textContent.trim();
+  return a ? { title: a, artist: (b || '').replace(/ - Topic$/, '') } : null;
+}
+
 function txt(x) {
   return x ? (x.simpleText || (x.runs && x.runs.map(function (r) { return r.text; }).join('')) || '') : '';
 }
@@ -232,6 +242,7 @@ function showTrack(t) {
   U.art.style.backgroundImage = 'url("' + artUrl(t, 1920) + '")';
   step = 's4';
   U.bg.style.backgroundImage = 'url("' + artUrl(t, 64) + '")';
+  if (!t.title) return;
   getLyrics(t).catch(function (e) { lerr = String(e && e.message); return null; }).then(function (res) {
     if (curId !== t.id) return;
     if (!res) {
@@ -256,7 +267,10 @@ function currentVideoId() {
   return m ? m[1] : null;
 }
 
-function dbg(txt) {
+const DEBUG = false;
+
+function dbg(txt, force) {
+  if (!DEBUG && !force) return;
   let d = document.getElementById('ytm-dbg');
   if (!d) {
     d = document.createElement('div');
@@ -268,7 +282,7 @@ function dbg(txt) {
 }
 
 function tick() {
-  try { tick2(); } catch (e) { dbg('ERR@' + step + ' ' + e.message + ' [' + [typeof U.root, typeof U.bg, typeof U.art, typeof U.lyr, typeof U.lines, typeof U.none, typeof U.fill, typeof U.t0, typeof U.t1, typeof U.st].join(',') + ']' + '\n' + String(e.stack).slice(0, 300)); }
+  try { tick2(); } catch (e) { dbg('ERR@' + step + ' ' + e.message + ' [' + [typeof U.root, typeof U.bg, typeof U.art, typeof U.lyr, typeof U.lines, typeof U.none, typeof U.fill, typeof U.t0, typeof U.t1, typeof U.st].join(',') + ']' + '\n' + String(e.stack).slice(0, 300), true); }
 }
 
 function tick2() {
@@ -292,7 +306,11 @@ function tick2() {
   step = 'on';
   if (U.root.style.display !== 'block') U.root.style.display = 'block';
   step = 'show';
-  if (!t.title && !t.metaTried) loadMeta(t);
+  if (!t.seen) t.seen = Date.now();
+  if (Date.now() - t.seen > 1200 && Date.now() - t.seen < 8000) {
+    const m = domMeta();
+    if (m && m.title !== t.title) { t.title = m.title; t.artist = m.artist; }
+  }
   if (curId !== id || (t.title && curTitle !== t.title)) showTrack(t);
   step = 'upd';
 
@@ -323,8 +341,3 @@ function tick2() {
 
 setInterval(tick, 250);
 
-// debug: expose native player text
-window.__ytmDom = function () {
-  const wp = document.querySelector('ytlr-watch-page');
-  return wp ? wp.innerText : 'no wp';
-};
