@@ -193,7 +193,7 @@ function dbg(txt) {
 }
 
 function tick() {
-  try { tick2(); } catch (e) { dbg('ERR@' + step + ' ' + e.message + '\n' + String(e.stack).slice(0, 300)); }
+  try { tick2(); } catch (e) { dbg('ERR@' + step + ' ' + e.message + ' [' + [typeof root, typeof bg, typeof art, typeof lyr, typeof lines, typeof none, typeof fill, typeof t0, typeof t1, typeof st].join(',') + ']' + '\n' + String(e.stack).slice(0, 300)); }
 }
 
 function tick2() {
