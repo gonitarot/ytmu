@@ -28,28 +28,25 @@ JSON.parse = function () {
   return r;
 };
 
-const CSS = `
-#ytm-player{position:fixed;left:0;top:0;width:100vw;height:100vh;z-index:2147483000;background:#0b0b0b;color:#fff;font-family:Roboto,Arial,sans-serif;overflow:hidden;display:none}
-#ytm-player.on{display:block}
-#ytm-bg{position:absolute;left:-10vw;top:-10vh;width:120vw;height:120vh;background-size:cover;background-position:center;opacity:.55}
-#ytm-shade{position:absolute;left:0;top:0;width:100%;height:100%;background:linear-gradient(90deg,rgba(0,0,0,.55),rgba(0,0,0,.75))}
-#ytm-art{position:absolute;left:5vw;top:11vh;width:62vh;height:62vh;border-radius:1.6vh;overflow:hidden;background:#222 center/cover no-repeat;box-shadow:0 3vh 8vh rgba(0,0,0,.6)}
-#ytm-cv{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:cover;display:none}
-#ytm-meta{position:absolute;left:5vw;top:76vh;width:62vh}
-#ytm-title{font-size:3.6vh;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#ytm-artist{font-size:2.8vh;color:rgba(255,255,255,.65);margin-top:.8vh;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#ytm-lyr{position:absolute;left:46vw;top:0;width:48vw;height:84vh;overflow:hidden;-webkit-mask-image:linear-gradient(transparent,#000 18%,#000 82%,transparent);mask-image:linear-gradient(transparent,#000 18%,#000 82%,transparent)}
-#ytm-lines{position:absolute;left:0;top:0;width:100%;transition:transform .45s ease-out}
-.ytm-l{font-size:5vh;font-weight:700;line-height:1.25;margin:2.6vh 0;color:rgba(255,255,255,.3);transition:color .3s,opacity .3s}
-.ytm-l.cur{color:#fff}
-.ytm-l.past{color:rgba(255,255,255,.4)}
-#ytm-none{position:absolute;left:46vw;top:40vh;width:48vw;font-size:3.4vh;color:rgba(255,255,255,.5);display:none}
-#ytm-bar{position:absolute;left:5vw;right:5vw;top:93vh;height:.7vh;background:rgba(255,255,255,.22);border-radius:1vh}
-#ytm-fill{height:100%;width:0;background:#fff;border-radius:1vh}
-#ytm-t0,#ytm-t1{position:absolute;top:94.6vh;font-size:2.2vh;color:rgba(255,255,255,.7)}
-#ytm-t0{left:5vw}#ytm-t1{right:5vw}
-#ytm-st{position:absolute;right:5vw;top:4vh;font-size:2.4vh;color:rgba(255,255,255,.6)}
-`;
+const ST = {
+  root: 'position:fixed;left:0;top:0;width:100vw;height:100vh;z-index:2147483000;background:#0b0b0b;color:#fff;font-family:Roboto,Arial,sans-serif;overflow:hidden;display:none',
+  bg: 'position:absolute;left:-10vw;top:-10vh;width:120vw;height:120vh;background-size:cover;background-position:center;opacity:.55',
+  shade: 'position:absolute;left:0;top:0;width:100%;height:100%;background:linear-gradient(90deg,rgba(0,0,0,.55),rgba(0,0,0,.75))',
+  art: 'position:absolute;left:5vw;top:11vh;width:62vh;height:62vh;border-radius:1.6vh;overflow:hidden;background-color:#222;background-size:cover;background-position:center;background-repeat:no-repeat;box-shadow:0 3vh 8vh rgba(0,0,0,.6)',
+  meta: 'position:absolute;left:5vw;top:76vh;width:62vh',
+  title: 'font-size:3.6vh;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis',
+  artist: 'font-size:2.8vh;color:rgba(255,255,255,.65);margin-top:.8vh;white-space:nowrap;overflow:hidden;text-overflow:ellipsis',
+  lyr: 'position:absolute;left:46vw;top:0;width:48vw;height:84vh;overflow:hidden',
+  lines: 'position:absolute;left:0;top:0;width:100%;transition:transform .45s ease-out',
+  line: 'font-size:5vh;font-weight:700;line-height:1.25;margin:2.6vh 0;transition:color .3s',
+  none: 'position:absolute;left:46vw;top:40vh;width:48vw;font-size:3.4vh;color:rgba(255,255,255,.5);display:none',
+  bar: 'position:absolute;left:5vw;right:5vw;top:93vh;height:.7vh;background:rgba(255,255,255,.22);border-radius:1vh',
+  fill: 'height:100%;width:0;background:#fff;border-radius:1vh',
+  t0: 'position:absolute;top:94.6vh;font-size:2.2vh;color:rgba(255,255,255,.7);left:5vw',
+  t1: 'position:absolute;top:94.6vh;font-size:2.2vh;color:rgba(255,255,255,.7);right:5vw',
+  st: 'position:absolute;right:5vw;top:4vh;font-size:2.4vh;color:rgba(255,255,255,.6)'
+};
+const COL = { cur: '#fff', past: 'rgba(255,255,255,.4)', next: 'rgba(255,255,255,.3)' };
 
 const U = {};
 let curId = null;
@@ -59,14 +56,12 @@ let step = '';
 
 function build() {
   if (U.root) return;
-  const style = document.createElement('style');
-  style.textContent = CSS;
-  document.head.appendChild(style);
   U.root = document.createElement('div');
   U.root.id = 'ytm-player';
   const mk = function (id, parent, text) {
     const e = document.createElement('div');
     e.id = id;
+    e.style.cssText = ST[id.slice(4)] || '';
     if (text) e.textContent = text;
     parent.appendChild(e);
     return e;
@@ -85,6 +80,7 @@ function build() {
   U.t0 = mk('ytm-t0', U.root, '0:00');
   U.t1 = mk('ytm-t1', U.root, '0:00');
   U.st = mk('ytm-st', U.root);
+  U.root.style.cssText = ST.root;
   document.body.appendChild(U.root);
 }
 
@@ -174,7 +170,7 @@ function showTrack(t) {
     const frag = document.createDocumentFragment();
     res.forEach(function (l) {
       const d = document.createElement('div');
-      d.className = 'ytm-l';
+      d.style.cssText = ST.line + ';color:' + COL.next;
       d.textContent = l.s || '♪';
       frag.appendChild(d);
     });
@@ -215,18 +211,18 @@ function tick2() {
   } catch (e) { }
   const watching = v && t && t.isMusic && full;
   if (!watching) {
-    if (U.root && U.root.className === 'on') U.root.className = '';
+    if (U.root && U.root.style.display !== 'none') U.root.style.display = 'none';
     return;
   }
   step = 'build';
   build();
   step = 'on';
-  if (U.root.className !== 'on') U.root.className = 'on';
+  if (U.root.style.display !== 'block') U.root.style.display = 'block';
   step = 'show';
   if (curId !== id) showTrack(t);
   step = 'upd';
 
-  dbg('ytm v3 on=' + U.root.className + ' lrc=' + (lrc ? lrc.length : lrc) + ' art=' + U.art.style.backgroundImage.slice(0, 60) + ' inDom=' + document.body.contains(U.root));
+  dbg('ytm v4 on=' + U.root.style.display + ' lrc=' + (lrc ? lrc.length : lrc) + ' art=' + U.art.style.backgroundImage.slice(0, 60) + ' inDom=' + document.body.contains(U.root));
   const cur = v.currentTime || 0;
   const dur = v.duration || t.duration || 0;
   U.fill.style.width = dur ? Math.min(100, (cur / dur) * 100) + '%' : '0';
@@ -240,7 +236,7 @@ function tick2() {
     if (idx !== curIdx) {
       curIdx = idx;
       const els = U.lines.children;
-      for (let i = 0; i < els.length; i++) els[i].className = 'ytm-l' + (i === idx ? ' cur' : i < idx ? ' past' : '');
+      for (let i = 0; i < els.length; i++) els[i].style.color = i === idx ? COL.cur : i < idx ? COL.past : COL.next;
       if (idx >= 0 && els[idx]) {
         const target = U.lyr.clientHeight * 0.4 - (els[idx].offsetTop + els[idx].offsetHeight / 2);
         U.lines.style.transform = 'translateY(' + Math.round(target) + 'px)';
