@@ -55,6 +55,7 @@ let curTitle = null;
 let lrc = null;
 let curIdx = -1;
 let step = '';
+let lerr = '';
 
 function build() {
   if (U.root) return;
@@ -199,7 +200,7 @@ function showTrack(t) {
   U.art.style.backgroundImage = 'url("' + artUrl(t, 1920) + '")';
   step = 's4';
   U.bg.style.backgroundImage = 'url("' + artUrl(t, 64) + '")';
-  getLyrics(t).then(function (res) {
+  getLyrics(t).catch(function (e) { lerr = String(e && e.message); return null; }).then(function (res) {
     if (curId !== t.id) return;
     if (!res) {
       U.none.textContent = 'Sin letra sincronizada';
@@ -263,7 +264,9 @@ function tick2() {
   if (curId !== id || (t.title && curTitle !== t.title)) showTrack(t);
   step = 'upd';
 
-  dbg('ytm v5 cur=' + curId + ' id=' + id + ' title=' + t.title + ' th=' + t.thumbs.length + ' ' + (t.thumbs[0] && t.thumbs[0].url.slice(0, 60)) + ' err=' + t.metaErr + '\nDOM=' + String(window.__ytmDom()).replace(/\n/g, ' | ').slice(0, 300) + '\n' + t.keys + ' on=' + U.root.style.display + ' lrc=' + (lrc ? lrc.length : lrc) + ' art=' + U.art.style.backgroundImage.slice(0, 60) + ' inDom=' + document.body.contains(U.root));
+  const rr = U.titleEl.getBoundingClientRect();
+  dbg('ytm v6 ttl=[' + U.titleEl.textContent.slice(0, 30) + '] r=' + Math.round(rr.left) + ',' + Math.round(rr.top) + ',' + Math.round(rr.width) + 'x' + Math.round(rr.height) +
+    '\nart=' + U.art.style.backgroundImage.slice(0, 50) + ' curTitle=' + curTitle + ' lrc=' + (lrc ? lrc.length : lrc) + ' none=' + U.none.style.display + ' kids=' + U.lines.children.length + ' step=' + step + ' lerr=' + lerr);
   const cur = v.currentTime || 0;
   const dur = v.duration || t.duration || 0;
   U.fill.style.width = dur ? Math.min(100, (cur / dur) * 100) + '%' : '0';
