@@ -55,6 +55,7 @@ let root, bg, art, cv, titleEl, artistEl, lyr, lines, none, fill, t0, t1, st;
 let curId = null;
 let lrc = null;
 let curIdx = -1;
+let step = '';
 
 function build() {
   if (root) return;
@@ -68,17 +69,17 @@ function build() {
     '<div id="ytm-lyr"><div id="ytm-lines"></div></div><div id="ytm-none"></div>' +
     '<div id="ytm-bar"><div id="ytm-fill"></div></div><div id="ytm-t0">0:00</div><div id="ytm-t1">0:00</div><div id="ytm-st"></div>';
   document.body.appendChild(root);
-  bg = root.querySelector('#ytm-bg');
-  art = root.querySelector('#ytm-art');
-  titleEl = root.querySelector('#ytm-title');
-  artistEl = root.querySelector('#ytm-artist');
-  lyr = root.querySelector('#ytm-lyr');
-  lines = root.querySelector('#ytm-lines');
-  none = root.querySelector('#ytm-none');
-  fill = root.querySelector('#ytm-fill');
-  t0 = root.querySelector('#ytm-t0');
-  t1 = root.querySelector('#ytm-t1');
-  st = root.querySelector('#ytm-st');
+  bg = document.getElementById('ytm-bg');
+  art = document.getElementById('ytm-art');
+  titleEl = document.getElementById('ytm-title');
+  artistEl = document.getElementById('ytm-artist');
+  lyr = document.getElementById('ytm-lyr');
+  lines = document.getElementById('ytm-lines');
+  none = document.getElementById('ytm-none');
+  fill = document.getElementById('ytm-fill');
+  t0 = document.getElementById('ytm-t0');
+  t1 = document.getElementById('ytm-t1');
+  st = document.getElementById('ytm-st');
 }
 
 function fmt(s) {
@@ -148,11 +149,13 @@ function showTrack(t) {
   lrc = null;
   curIdx = -1;
   lines.innerHTML = '';
-  lines.style.transform = 'translateY(0)';
-  none.style.display = 'none';
+  step = 's1'; lines.style.transform = 'translateY(0)';
+  step = 's2'; none.style.display = 'none';
   titleEl.textContent = t.title;
   artistEl.textContent = t.artist;
+  step = 's3';
   art.style.backgroundImage = 'url(' + artUrl(t, 1920) + ')';
+  step = 's4';
   bg.style.backgroundImage = 'url(' + artUrl(t, 64) + ')';
   getLyrics(t).then(function (res) {
     if (curId !== t.id) return;
@@ -190,7 +193,7 @@ function dbg(txt) {
 }
 
 function tick() {
-  try { tick2(); } catch (e) { dbg('ERR ' + e.message + '\n' + String(e.stack).slice(0, 300)); }
+  try { tick2(); } catch (e) { dbg('ERR@' + step + ' ' + e.message + '\n' + String(e.stack).slice(0, 300)); }
 }
 
 function tick2() {
@@ -209,9 +212,13 @@ function tick2() {
     if (root && root.className === 'on') root.className = '';
     return;
   }
+  step = 'build';
   build();
+  step = 'on';
   if (root.className !== 'on') root.className = 'on';
+  step = 'show';
   if (curId !== id) showTrack(t);
+  step = 'upd';
 
   dbg('ytm v3 on=' + root.className + ' lrc=' + (lrc ? lrc.length : lrc) + ' art=' + art.style.backgroundImage.slice(0, 60) + ' inDom=' + document.body.contains(root));
   const cur = v.currentTime || 0;
