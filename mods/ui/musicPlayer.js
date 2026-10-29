@@ -176,8 +176,20 @@ function currentVideoId() {
   return m ? m[1] : null;
 }
 
+function dbg(txt) {
+  let d = document.getElementById('ytm-dbg');
+  if (!d) {
+    d = document.createElement('div');
+    d.id = 'ytm-dbg';
+    d.style.cssText = 'position:fixed;left:8px;top:8px;z-index:99999;font:18px monospace;color:#0f0;background:rgba(0,0,0,.6);padding:4px 8px;white-space:pre';
+    document.body.appendChild(d);
+  }
+  d.textContent = txt;
+}
+
 function tick() {
   const id = currentVideoId();
+  try { dbg('ytm v1 hash=' + location.hash.slice(0, 60) + '\nid=' + id + ' tracks=' + Object.keys(tracks).length + ' music=' + (tracks[id] && tracks[id].isMusic) + ' video=' + !!document.querySelector('video')); } catch (e) { }
   const v = document.querySelector('video');
   const t = id && tracks[id];
   const watching = /\/watch/.test(location.hash) && v && t && t.isMusic;
