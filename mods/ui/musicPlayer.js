@@ -41,6 +41,7 @@ const ST = {
   lyr: 'position:absolute;left:46vw;top:0;width:48vw;height:84vh;overflow:hidden',
   lines: 'position:absolute;left:0;top:0;width:100%;transition:transform .45s ease-out',
   line: 'font-size:5vh;font-weight:700;line-height:1.25;margin:2.6vh 0;transition:color .3s',
+  cv: 'position:absolute;left:0;top:0;width:100%;height:100%;object-fit:cover;display:none',
   none: 'position:absolute;left:46vw;top:40vh;width:48vw;font-size:3.4vh;color:rgba(255,255,255,.5);display:none',
   bar: 'position:absolute;left:5vw;right:5vw;top:93vh;height:.7vh;background:rgba(255,255,255,.22);border-radius:1vh',
   fill: 'height:100%;width:0;background:#fff;border-radius:1vh',
@@ -74,6 +75,13 @@ function build() {
   U.bg = mk('ytm-bg', U.root);
   mk('ytm-shade', U.root);
   U.art = mk('ytm-art', U.root);
+  U.cv = document.createElement('video');
+  U.cv.id = 'ytm-cv';
+  U.cv.style.cssText = ST.cv;
+  U.cv.muted = true;
+  U.cv.loop = true;
+  U.cv.setAttribute('playsinline', '');
+  U.art.appendChild(U.cv);
   const meta = mk('ytm-meta', U.root);
   U.titleEl = mk('ytm-title', meta);
   U.artistEl = mk('ytm-artist', meta);
@@ -119,16 +127,15 @@ function parseLrc(text) {
   return out;
 }
 
+const HELPER = 'http://localhost:8099';
+
 function jget(url) {
-  return fetch(url).then(function (r) { lerr += ' ' + r.status; return r.ok ? r.json() : null; });
+  return fetch(url).then(function (r) { return r.ok ? r.json() : null; });
 }
 
-// Direct first; the YouTube TV CSP may block it, so retry through the app's local CORS proxy.
+// The TV page's CSP only reaches localhost, so lyrics go through the on-device helper app.
 function lrclib(url) {
-  return jget(url).catch(function (e) {
-    lerr += ' E1';
-    return jget('http://localhost:8099/cors-bypass/' + url).catch(function (e2) { lerr += ' E2:' + (e2 && e2.message); return null; });
-  });
+  return jget(HELPER + '/p?u=' + encodeURIComponent(url)).catch(function () { return null; });
 }
 
 function cleanTitle(s) {
@@ -235,10 +242,32 @@ function loadMeta(t) {
   } catch (e) { t.metaErr = 'call ' + e.message; }
 }
 
+function loadCanvas(t) {
+  if (!t.title) return;
+  const id = t.id;
+  fetch(HELPER + '/canvas?title=' + encodeURIComponent(t.title) + '&artist=' + encodeURIComponent(t.artist) + '&dur=' + (t.duration || 0))
+    .then(function (r) { return r.json(); })
+    .then(function (j) {
+      if (!j || !j.url || curId !== id) return null;
+      return fetch(HELPER + '/cv?u=' + encodeURIComponent(j.url)).then(function (r) { return r.blob(); });
+    })
+    .then(function (blob) {
+      if (!blob || curId !== id) return;
+      if (U.cv.src) URL.revokeObjectURL(U.cv.src);
+      U.cv.src = URL.createObjectURL(blob);
+      U.cv.style.display = 'block';
+      const pr = U.cv.play();
+      if (pr && pr.catch) pr.catch(function () { });
+    })
+    .catch(function () { });
+}
+
 function showTrack(t) {
   curId = t.id;
   curTitle = t.title;
   curMvt = t.mvt;
+  U.cv.style.display = 'none';
+  U.cv.removeAttribute('src');
   lrc = null;
   curIdx = -1;
   while (U.lines.firstChild) U.lines.removeChild(U.lines.firstChild);
@@ -251,10 +280,11 @@ function showTrack(t) {
   step = 's4';
   U.bg.style.backgroundImage = 'url("' + artUrl(t, 64) + '")';
   if (!t.title) return;
+  loadCanvas(t);
   getLyrics(t).catch(function (e) { lerr = String(e && e.message); return null; }).then(function (res) {
     if (curId !== t.id) return;
     if (!res) {
-      U.none.textContent = 'Sin letra sincronizada' + (DEBUG ? '' : ' [' + lerr + ']');
+      U.none.textContent = 'Sin letra sincronizada';
       U.none.style.display = 'block';
       return;
     }
