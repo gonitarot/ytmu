@@ -2,6 +2,7 @@
 // Shown only for music tracks (videoDetails.musicVideoType / category "Music").
 
 const tracks = {};
+let lastId = null;
 const lyricsCache = {};
 
 const origParse = JSON.parse;
@@ -12,6 +13,7 @@ JSON.parse = function () {
     if (d && d.videoId) {
       const mf = r.microformat && r.microformat.playerMicroformatRenderer;
       const isMusic = !!d.musicVideoType || (mf && mf.category === 'Music');
+      lastId = d.videoId;
       tracks[d.videoId] = {
         id: d.videoId,
         title: d.title,
@@ -188,11 +190,17 @@ function dbg(txt) {
 }
 
 function tick() {
-  const id = currentVideoId();
-  try { dbg('ytm v1 hash=' + location.hash.slice(0, 60) + '\nid=' + id + ' tracks=' + Object.keys(tracks).length + ' music=' + (tracks[id] && tracks[id].isMusic) + ' video=' + !!document.querySelector('video')); } catch (e) { }
   const v = document.querySelector('video');
+  const id = lastId;
   const t = id && tracks[id];
-  const watching = /\/watch/.test(location.hash) && v && t && t.isMusic;
+  let rect = v ? v.getBoundingClientRect() : null;
+  const full = !!rect && rect.width >= window.innerWidth * 0.9 && rect.height >= window.innerHeight * 0.9;
+  try {
+    const wp = document.querySelector('ytlr-watch-page');
+    dbg('ytm v2 hash=' + location.hash.slice(0, 50) + '\nid=' + id + ' music=' + (t && t.isMusic) + ' full=' + full + ' paused=' + (v && v.paused) +
+      '\nrect=' + (rect ? Math.round(rect.width) + 'x' + Math.round(rect.height) : '-') + ' wp=' + !!wp + ' inner=' + window.innerWidth + 'x' + window.innerHeight);
+  } catch (e) { }
+  const watching = v && t && t.isMusic && full;
   if (!watching) {
     if (root && root.className === 'on') root.className = '';
     return;
