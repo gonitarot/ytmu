@@ -182,7 +182,13 @@ function loadMeta(t) {
           const sec = c && c.find(function (i) { return i.itemSectionRenderer; });
           const vm = sec && sec.itemSectionRenderer.contents.find(function (i) { return i.videoMetadataRenderer; });
           const m = vm && vm.videoMetadataRenderer;
-          if (m) {
+          const ov = resp && resp.playerOverlays && resp.playerOverlays.playerOverlayRenderer && resp.playerOverlays.playerOverlayRenderer.videoDetails &&
+            resp.playerOverlays.playerOverlayRenderer.videoDetails.playerOverlayVideoDetailsRenderer;
+          if (ov && txt(ov.title)) {
+            t.title = txt(ov.title);
+            const sub = ov.subtitle && ov.subtitle.runs ? ov.subtitle.runs[0].text : txt(ov.subtitle);
+            t.artist = (sub || '').replace(/ - Topic$/, '');
+          } else if (m) {
             t.title = txt(m.title);
             t.artist = txt(m.owner && m.owner.videoOwnerRenderer && m.owner.videoOwnerRenderer.title).replace(/ - Topic$/, '');
           } else {
