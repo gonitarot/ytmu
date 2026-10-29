@@ -188,7 +188,7 @@ function dbg(txt) {
   if (!d) {
     d = document.createElement('div');
     d.id = 'ytm-dbg';
-    d.style.cssText = 'position:fixed;left:8px;top:8px;z-index:99999;font:18px monospace;color:#0f0;background:rgba(0,0,0,.6);padding:4px 8px;white-space:pre';
+    d.style.cssText = 'position:fixed;left:8px;top:8px;z-index:2147483647;font:18px monospace;color:#0f0;background:rgba(0,0,0,.6);padding:4px 8px;white-space:pre';
     document.body.appendChild(d);
   }
   d.textContent = txt;
