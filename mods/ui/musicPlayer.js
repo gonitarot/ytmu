@@ -29,7 +29,7 @@ JSON.parse = function () {
 };
 
 const CSS = `
-#ytm-player{position:fixed;left:0;top:0;width:100vw;height:100vh;z-index:9998;background:#0b0b0b;color:#fff;font-family:Roboto,Arial,sans-serif;overflow:hidden;display:none}
+#ytm-player{position:fixed;left:0;top:0;width:100vw;height:100vh;z-index:2147483000;background:#0b0b0b;color:#fff;font-family:Roboto,Arial,sans-serif;overflow:hidden;display:none}
 #ytm-player.on{display:block}
 #ytm-bg{position:absolute;left:-10vw;top:-10vh;width:120vw;height:120vh;background-size:cover;background-position:center;opacity:.55}
 #ytm-shade{position:absolute;left:0;top:0;width:100%;height:100%;background:linear-gradient(90deg,rgba(0,0,0,.55),rgba(0,0,0,.75))}
@@ -190,6 +190,10 @@ function dbg(txt) {
 }
 
 function tick() {
+  try { tick2(); } catch (e) { dbg('ERR ' + e.message + '\n' + String(e.stack).slice(0, 300)); }
+}
+
+function tick2() {
   const v = document.querySelector('video');
   const id = lastId;
   const t = id && tracks[id];
@@ -209,6 +213,7 @@ function tick() {
   if (root.className !== 'on') root.className = 'on';
   if (curId !== id) showTrack(t);
 
+  dbg('ytm v3 on=' + root.className + ' lrc=' + (lrc ? lrc.length : lrc) + ' art=' + art.style.backgroundImage.slice(0, 60) + ' inDom=' + document.body.contains(root));
   const cur = v.currentTime || 0;
   const dur = v.duration || t.duration || 0;
   fill.style.width = dur ? Math.min(100, (cur / dur) * 100) + '%' : '0';
