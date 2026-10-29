@@ -21,6 +21,7 @@ JSON.parse = function () {
         artist: (d.author || (mf && mf.ownerChannelName) || '').replace(/ - Topic$/, ''),
         duration: parseInt(d.lengthSeconds, 10) || 0,
         isMusic,
+        mvt: d.musicVideoType,
         isSong: d.musicVideoType === 'MUSIC_VIDEO_TYPE_ATV',
         thumbs: (d.thumbnail && d.thumbnail.thumbnails) || []
       };
@@ -56,6 +57,7 @@ let lrc = null;
 let curIdx = -1;
 let step = '';
 let lerr = '';
+let curMvt = '';
 
 function build() {
   if (U.root) return;
@@ -100,7 +102,7 @@ function artUrl(t, size) {
   if (last && /googleusercontent|ggpht/.test(last.url)) {
     return last.url.replace(/=w\d+-h\d+/, '=w' + size + '-h' + size).replace(/=s\d+/, '=s' + size);
   }
-  return 'https://i.ytimg.com/vi/' + t.id + '/maxresdefault.jpg';
+  return 'https://i.ytimg.com/vi/' + t.id + (size <= 64 ? '/mqdefault.jpg' : '/maxresdefault.jpg');
 }
 
 function parseLrc(text) {
@@ -189,6 +191,7 @@ function loadMeta(t) {
 function showTrack(t) {
   curId = t.id;
   curTitle = t.title;
+  curMvt = t.mvt;
   lrc = null;
   curIdx = -1;
   while (U.lines.firstChild) U.lines.removeChild(U.lines.firstChild);
@@ -265,7 +268,7 @@ function tick2() {
   step = 'upd';
 
   const rr = U.titleEl.getBoundingClientRect();
-  dbg('ytm v6 ttl=[' + U.titleEl.textContent.slice(0, 30) + '] r=' + Math.round(rr.left) + ',' + Math.round(rr.top) + ',' + Math.round(rr.width) + 'x' + Math.round(rr.height) +
+  dbg('ytm v6 mvt=' + curMvt + ' ttl=[' + U.titleEl.textContent.slice(0, 30) + '] r=' + Math.round(rr.left) + ',' + Math.round(rr.top) + ',' + Math.round(rr.width) + 'x' + Math.round(rr.height) +
     '\nart=' + U.art.style.backgroundImage.slice(0, 50) + ' curTitle=' + curTitle + ' lrc=' + (lrc ? lrc.length : lrc) + ' none=' + U.none.style.display + ' kids=' + U.lines.children.length + ' step=' + step + ' lerr=' + lerr);
   const cur = v.currentTime || 0;
   const dur = v.duration || t.duration || 0;
