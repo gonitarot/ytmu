@@ -82,6 +82,8 @@ function build() {
   U.cv.loop = true;
   U.cv.setAttribute('playsinline', '');
   U.art.appendChild(U.cv);
+  U.cv.onerror = function () { U.st.textContent = 'cv err ' + (U.cv.error && U.cv.error.code); };
+  U.cv.onloadeddata = function () { U.st.textContent = 'cv ok ' + U.cv.videoWidth + 'x' + U.cv.videoHeight; };
   const meta = mk('ytm-meta', U.root);
   U.titleEl = mk('ytm-title', meta);
   U.artistEl = mk('ytm-artist', meta);
@@ -252,7 +254,8 @@ function loadCanvas(t) {
       return fetch(HELPER + '/cv?u=' + encodeURIComponent(j.url)).then(function (r) { return r.blob(); });
     })
     .then(function (blob) {
-      if (!blob || curId !== id) return;
+      if (!blob || curId !== id) { U.st.textContent = 'cv none'; return; }
+      U.st.textContent = 'cv blob ' + blob.size;
       if (U.cv.src) URL.revokeObjectURL(U.cv.src);
       U.cv.src = URL.createObjectURL(blob);
       U.cv.style.display = 'block';
@@ -360,7 +363,7 @@ function tick2() {
   U.fill.style.width = dur ? Math.min(100, (cur / dur) * 100) + '%' : '0';
   U.t0.textContent = fmt(cur);
   U.t1.textContent = fmt(dur);
-  U.st.textContent = v.paused ? '❚❚  Pausa' : '';
+  if (v.paused) U.st.textContent = '❚❚  Pausa';
 
   if (lrc) {
     let idx = -1;
