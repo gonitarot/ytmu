@@ -192,7 +192,7 @@ function loadMeta(t) {
             t.title = txt(m.title);
             t.artist = txt(m.owner && m.owner.videoOwnerRenderer && m.owner.videoOwnerRenderer.title).replace(/ - Topic$/, '');
           } else {
-            t.metaErr = 'no vmr ' + Object.keys(resp || {}).join(',') + ' | ' + keyPaths(resp && resp.contents, 0);
+            t.metaErr = 'no vmr ' + Object.keys(resp || {}).join(',') + ' | PO ' + keyPaths(resp && resp.playerOverlays, 0) + ' | CT ' + keyPaths(resp && resp.currentVideoThumbnail, 0) + ' | OV ' + keyPaths(resp && resp.overlay, 0);
           }
         } catch (e) { t.metaErr = 'parse ' + e.message; }
       });
@@ -281,7 +281,7 @@ function tick2() {
 
   const rr = U.titleEl.getBoundingClientRect();
   dbg('ytm v6 mvt=' + curMvt + ' ttl=[' + U.titleEl.textContent.slice(0, 30) + '] r=' + Math.round(rr.left) + ',' + Math.round(rr.top) + ',' + Math.round(rr.width) + 'x' + Math.round(rr.height) +
-    '\nart=' + U.art.style.backgroundImage.slice(0, 50) + ' curTitle=' + curTitle + ' lrc=' + (lrc ? lrc.length : lrc) + ' none=' + U.none.style.display + ' kids=' + U.lines.children.length + ' step=' + step + ' lerr=' + lerr + ' merr=' + t.metaErr);
+    '\nart=' + U.art.style.backgroundImage.slice(0, 50) + ' curTitle=' + curTitle + ' lrc=' + (lrc ? lrc.length : lrc) + ' none=' + U.none.style.display + ' kids=' + U.lines.children.length + ' step=' + step + ' lerr=' + lerr + ' merr=' + t.metaErr + '\nDOM: ' + String((document.querySelector('ytlr-watch-page') || {}).textContent).slice(0, 300));
   const cur = v.currentTime || 0;
   const dur = v.duration || t.duration || 0;
   U.fill.style.width = dur ? Math.min(100, (cur / dur) * 100) + '%' : '0';
