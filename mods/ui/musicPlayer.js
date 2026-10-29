@@ -119,8 +119,16 @@ function parseLrc(text) {
   return out;
 }
 
+function jget(url) {
+  return fetch(url).then(function (r) { lerr += ' ' + r.status; return r.ok ? r.json() : null; });
+}
+
+// Direct first; the YouTube TV CSP may block it, so retry through the app's local CORS proxy.
 function lrclib(url) {
-  return fetch(url).then(function (r) { lerr += ' ' + r.status; return r.ok ? r.json() : null; }).catch(function (e) { lerr += ' E:' + (e && e.message); return null; });
+  return jget(url).catch(function (e) {
+    lerr += ' E1';
+    return jget('http://localhost:8099/cors-bypass/' + url).catch(function (e2) { lerr += ' E2:' + (e2 && e2.message); return null; });
+  });
 }
 
 function cleanTitle(s) {
