@@ -12,7 +12,7 @@ JSON.parse = function () {
     const d = r && r.videoDetails;
     if (d && d.videoId) {
       const mf = r.microformat && r.microformat.playerMicroformatRenderer;
-      const isMusic = !!d.musicVideoType || (mf && mf.category === 'Music');
+      const isMusic = d.musicVideoType === 'MUSIC_VIDEO_TYPE_ATV';
       lastId = d.videoId;
       tracks[d.videoId] = {
         id: d.videoId,
@@ -41,7 +41,6 @@ const ST = {
   lyr: 'position:absolute;left:46vw;top:0;width:48vw;height:84vh;overflow:hidden',
   lines: 'position:absolute;left:0;top:0;width:100%;transition:transform .45s ease-out',
   line: 'font-size:5vh;font-weight:700;line-height:1.25;margin:2.6vh 0;transition:color .3s',
-  cv: 'position:absolute;left:0;top:0;width:100%;height:100%;object-fit:cover;display:none',
   none: 'position:absolute;left:46vw;top:40vh;width:48vw;font-size:3.4vh;color:rgba(255,255,255,.5);display:none',
   bar: 'position:absolute;left:5vw;right:5vw;top:93vh;height:.7vh;background:rgba(255,255,255,.22);border-radius:1vh',
   fill: 'height:100%;width:0;background:#fff;border-radius:1vh',
@@ -75,15 +74,6 @@ function build() {
   U.bg = mk('ytm-bg', U.root);
   mk('ytm-shade', U.root);
   U.art = mk('ytm-art', U.root);
-  U.cv = document.createElement('video');
-  U.cv.id = 'ytm-cv';
-  U.cv.style.cssText = ST.cv;
-  U.cv.muted = true;
-  U.cv.loop = true;
-  U.cv.setAttribute('playsinline', '');
-  U.art.appendChild(U.cv);
-  U.cv.onerror = function () { U.st.textContent = 'cv err ' + (U.cv.error && U.cv.error.code); };
-  U.cv.onloadeddata = function () { U.st.textContent = 'cv ok ' + U.cv.videoWidth + 'x' + U.cv.videoHeight; };
   const meta = mk('ytm-meta', U.root);
   U.titleEl = mk('ytm-title', meta);
   U.artistEl = mk('ytm-artist', meta);
@@ -244,23 +234,27 @@ function loadMeta(t) {
   } catch (e) { t.metaErr = 'call ' + e.message; }
 }
 
+let canvasOn = false;
+
+function hideCanvas() {
+  if (!canvasOn) return;
+  canvasOn = false;
+  fetch(HELPER + '/cvhide').catch(function () { });
+}
+
+// Canvas plays in a native overlay window (helper app) exactly over the art square.
 function loadCanvas(t) {
+  hideCanvas();
   if (!t.title) return;
   const id = t.id;
-  fetch(HELPER + '/canvas?title=' + encodeURIComponent(t.title) + '&artist=' + encodeURIComponent(t.artist) + '&dur=' + (t.duration || 0))
+  fetch(HELPER + '/cvshow?title=' + encodeURIComponent(t.title) + '&artist=' + encodeURIComponent(t.artist) + '&dur=' + (t.duration || 0) +
+    '&x=0.05&y=0.11&w=' + (0.62 * 1080 / 1920) + '&h=0.62&r=17')
     .then(function (r) { return r.json(); })
     .then(function (j) {
-      if (!j || !j.url || curId !== id) return null;
-      return fetch(HELPER + '/cv?u=' + encodeURIComponent(j.url)).then(function (r) { return r.blob(); });
-    })
-    .then(function (blob) {
-      if (!blob || curId !== id) { U.st.textContent = 'cv none'; return; }
-      U.st.textContent = 'cv blob ' + blob.size;
-      if (U.cv.src) URL.revokeObjectURL(U.cv.src);
-      U.cv.src = URL.createObjectURL(blob);
-      U.cv.style.display = 'block';
-      const pr = U.cv.play();
-      if (pr && pr.catch) pr.catch(function () { });
+      if (j && j.ok) {
+        if (curId === id && U.root.style.display === 'block') canvasOn = true;
+        else fetch(HELPER + '/cvhide').catch(function () { });
+      }
     })
     .catch(function () { });
 }
@@ -269,8 +263,6 @@ function showTrack(t) {
   curId = t.id;
   curTitle = t.title;
   curMvt = t.mvt;
-  U.cv.style.display = 'none';
-  U.cv.removeAttribute('src');
   lrc = null;
   curIdx = -1;
   while (U.lines.firstChild) U.lines.removeChild(U.lines.firstChild);
@@ -340,6 +332,7 @@ function tick2() {
   const watching = v && t && t.isMusic && full;
   if (!watching) {
     if (U.root && U.root.style.display !== 'none') U.root.style.display = 'none';
+    hideCanvas();
     return;
   }
   step = 'build';
