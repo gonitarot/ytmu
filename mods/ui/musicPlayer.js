@@ -120,7 +120,7 @@ function parseLrc(text) {
 }
 
 function lrclib(url) {
-  return fetch(url).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
+  return fetch(url).then(function (r) { lerr += ' ' + r.status; return r.ok ? r.json() : null; }).catch(function (e) { lerr += ' E:' + (e && e.message); return null; });
 }
 
 function cleanTitle(s) {
@@ -246,7 +246,7 @@ function showTrack(t) {
   getLyrics(t).catch(function (e) { lerr = String(e && e.message); return null; }).then(function (res) {
     if (curId !== t.id) return;
     if (!res) {
-      U.none.textContent = 'Sin letra sincronizada';
+      U.none.textContent = 'Sin letra sincronizada' + (DEBUG ? '' : ' [' + lerr + ']');
       U.none.style.display = 'block';
       return;
     }
