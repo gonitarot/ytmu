@@ -151,6 +151,12 @@ function getLyrics(t) {
     });
 }
 
+function keyPaths(o, d) {
+  if (!o || typeof o !== 'object' || d > 7) return '';
+  if (Array.isArray(o)) return '[' + keyPaths(o[0], d + 1) + ']';
+  return Object.keys(o).slice(0, 6).map(function (k) { return k + (typeof o[k] === 'object' ? '>' + keyPaths(o[k], d + 1) : ''); }).join(',');
+}
+
 function txt(x) {
   return x ? (x.simpleText || (x.runs && x.runs.map(function (r) { return r.text; }).join('')) || '') : '';
 }
@@ -180,7 +186,7 @@ function loadMeta(t) {
             t.title = txt(m.title);
             t.artist = txt(m.owner && m.owner.videoOwnerRenderer && m.owner.videoOwnerRenderer.title).replace(/ - Topic$/, '');
           } else {
-            t.metaErr = 'no vmr ' + Object.keys(resp || {}).join(',') + ' | ' + JSON.stringify(resp && resp.contents).slice(0, 900);
+            t.metaErr = 'no vmr ' + Object.keys(resp || {}).join(',') + ' | ' + keyPaths(resp && resp.contents, 0);
           }
         } catch (e) { t.metaErr = 'parse ' + e.message; }
       });
@@ -232,7 +238,7 @@ function dbg(txt) {
   if (!d) {
     d = document.createElement('div');
     d.id = 'ytm-dbg';
-    d.style.cssText = 'position:fixed;left:8px;top:8px;z-index:2147483647;font:18px monospace;color:#0f0;background:rgba(0,0,0,.6);padding:4px 8px;white-space:pre';
+    d.style.cssText = 'position:fixed;left:8px;top:8px;z-index:2147483647;font:14px monospace;max-width:1900px;color:#0f0;background:rgba(0,0,0,.6);padding:4px 8px;white-space:pre-wrap;word-break:break-all';
     document.body.appendChild(d);
   }
   d.textContent = txt;
