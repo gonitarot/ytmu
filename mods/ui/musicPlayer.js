@@ -222,7 +222,7 @@ function tick2() {
   if (curId !== id) showTrack(t);
   step = 'upd';
 
-  dbg('ytm v4 on=' + U.root.style.display + ' lrc=' + (lrc ? lrc.length : lrc) + ' art=' + U.art.style.backgroundImage.slice(0, 60) + ' inDom=' + document.body.contains(U.root));
+  dbg('ytm v5 cur=' + curId + ' id=' + id + ' title=' + t.title + ' th=' + t.thumbs.length + ' on=' + U.root.style.display + ' lrc=' + (lrc ? lrc.length : lrc) + ' art=' + U.art.style.backgroundImage.slice(0, 60) + ' inDom=' + document.body.contains(U.root));
   const cur = v.currentTime || 0;
   const dur = v.duration || t.duration || 0;
   U.fill.style.width = dur ? Math.min(100, (cur / dur) * 100) + '%' : '0';
