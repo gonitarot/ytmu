@@ -1,0 +1,332 @@
+{
+    "__contributors": [
+        "Wolfolion"
+    ],
+    "settings": {
+        "options": {
+            "socialMedia": {
+                "title": "Посилання",
+                "qrCodeScanMessage": "Ви можете перейти на сторінку {{name}}, відсканувавши QR-код нижче.",
+                "announcements": "Оголошення",
+                "group": "Група",
+                "website": "Вебсайт",
+                "githubSponsors": "GitHub Sponsors"
+            },
+            "adBlock": "Блокування реклами",
+            "sponsorblock": {
+                "title": "Налаштування SponsorBlock",
+                "options": {
+                    "enableSB": "Увімкнути SponsorBlock",
+                    "manualSkip": "Пропускати вручну",
+                    "segments": "Сегменти",
+                    "categories": {
+                        "sponsor": "Пропускати спонсорські блоки",
+                        "intro": "Пропускати вступ",
+                        "outro": "Пропускати завершення",
+                        "interaction": "Пропускати заклики до взаємодії",
+                        "selfpromo": "Пропускати саморекламу",
+                        "preview": "Пропускати прев’ю та повтори",
+                        "filler": "Пропускати офтоп/жарти",
+                        "music_offtopic": "Пропускати нетематичну музику",
+                        "highlights": "Увімкнути ключові моменти"
+                    },
+                    "showSBToasts": "Сповіщення SponsorBlock"
+                }
+            },
+            "dearrow": {
+                "title": "Налаштування DeArrow",
+                "options": {
+                    "enableDA": "Увімкнути DeArrow",
+                    "enableDAThumbnails": "Мініатюри DeArrow"
+                }
+            },
+            "misc": {
+                "title": "Різне",
+                "options": {
+                    "endScreenCards": "Приховати картки наприкінці відео",
+                    "youThereRenderer": "Увімкнути повідомлення «Ви ще дивитеся?»",
+                    "paidPromoOverlay": "Показувати позначку «Містить рекламу»",
+                    "whosWatching": {
+                        "title": "Меню «Хто дивиться?»",
+                        "options": {
+                            "enableWW": "Увімкнути меню «Хто дивиться?»",
+                            "permaEnableWW": "Завжди вмикати меню «Хто дивиться?»",
+                            "enableWWOnExit": "Показувати меню «Хто дивиться?» під час виходу"
+                        }
+                    },
+                    "fixUI": "Виправлення інтерфейсу",
+                    "hqThumbnails": "Мініатюри високої якості",
+                    "longPress": "Тривале натискання",
+                    "shorts": "Shorts",
+                    "videoPreviews": "Попередній перегляд відео",
+                    "ttWelcomeMsg": "Вітальне повідомлення",
+                    "guestSignInReminder": "Нагадування про гостьовий вхід",
+                    "reloadHomeOnStartup": "Оновлювати головну при запуску"
+                }
+            },
+            "subtitles": {
+                "title": "Субтитри",
+                "options": {
+                    "showLocalSubtitle": "Локальні субтитри",
+                    "showHiddenSubtitles": "Приховані субтитри",
+                    "persistCaptionStyle": "Remember Caption Style"
+                }
+            },
+            "videoPlayer": {
+                "title": "Налаштування відеоплеєра",
+                "subtitle": "Налаштування функцій відеоплеєра",
+                "options": {
+                    "patching": {
+                        "title": "Патч інтерфейсу відеоплеєра",
+                        "options": {
+                            "enableVPUIPatching": "Патч інтерфейсу відеоплеєра",
+                            "previousNextBtns": "Кнопки «Попереднє/Наступне»",
+                            "showSuperThxBtn": "Кнопка Super Thanks",
+                            "showAIAskBtn": "Кнопка «Запитати ШІ»",
+                            "showSpeedCtrlBtn": "Кнопка «Швидкість»",
+                            "addMPBtn": "Кнопка мініплеєра",
+                            "swapMPWithPIP": "Замінити мініплеєр на PiP"
+                        }
+                    },
+                    "preferredVideoQuality": {
+                        "title": "Якість відео",
+                        "subtitle": "Вибирає найближчу доступну якість під час запуску"
+                    },
+                    "speedSettings": {
+                        "title": "Крок зміни швидкості",
+                        "subtitle": "Виберіть крок зміни швидкості відтворення"
+                    },
+                    "preferredVideoCodec": {
+                        "title": "Відеокодек",
+                        "subtitle": "Виберіть бажаний відеокодек"
+                    },
+                    "afr": "Auto Frame Rate",
+                    "afrPauseDuration": {
+                        "title": "Пауза Auto Frame Rate",
+                        "subtitle": "Встановіть тривалість паузи відтворення (у секундах) під час зміни частоти кадрів"
+                    },
+                    "codecAny": "Будь-який",
+                    "qualityAuto": "Авто",
+                    "hideRelatedVideosPlayer": "Приховувати схожі відео"
+                }
+            },
+            "time": {
+                "second": "{{count}} сек",
+                "seconds": "{{count}} сек",
+                "minute": "{{count}} хв",
+                "minutes": "{{count}} хв"
+            },
+            "uiSettings": {
+                "title": "Налаштування інтерфейсу",
+                "subtitle": "Налаштуйте інтерфейс під себе",
+                "options": {
+                    "hideWatchedVideos": {
+                        "title": "Приховувати переглянуті відео",
+                        "options": {
+                            "enableHideWatchedVideos": "Приховувати переглянуті відео",
+                            "watchedVideosThreshold": {
+                                "title": "Вважати переглянутим після",
+                                "subtitle": "Виберіть відсоток перегляду, після якого відео приховуватиметься"
+                            },
+                            "setPagesToHideWatchedVideos": "Де приховувати переглянуті відео"
+                        }
+                    },
+                    "screenDimming": {
+                        "title": "Затемнення екрана",
+                        "options": {
+                            "enableScreenDimming": "Затемнення екрана",
+                            "dimmingTimeout": {
+                                "title": "Затримка затемнення",
+                                "subtitle": "Встановіть час бездіяльності (у секундах), після якого екран затемнюється"
+                            },
+                            "dimmingOpacity": {
+                                "title": "Рівень затемнення",
+                                "subtitle": "Виберіть рівень затемнення"
+                            }
+                        }
+                    },
+                    "disableSidebarContents": {
+                        "title": "Приховані розділи меню",
+                        "subtitle": "Виберіть розділи бокового меню, які потрібно приховати"
+                    },
+                    "launchToOnStartup": {
+                        "title": "Сторінка запуску",
+                        "subtitle": "Виберіть сторінку, яка відкриватиметься під час запуску TizenTube"
+                    },
+                    "categories": {
+                        "search": "Пошук",
+                        "home": "Головна",
+                        "sports": "Спорт",
+                        "news": "Новини",
+                        "music": "Музика",
+                        "podcasts": "Подкасти",
+                        "moviesAndTv": "Фільми й телебачення",
+                        "live": "Наживо",
+                        "gaming": "Ігри",
+                        "subscriptions": "Підписки",
+                        "library": "Бібліотека",
+                        "more": "Більше",
+                        "shorts": "Shorts",
+                        "searchResults": "Результати пошуку"
+                    },
+                    "sortSubscriptionsByAlphabet": "Сортувати підписки за алфавітом",
+                    "disableChannelsOnSidebar": "Приховати канали в боковому меню",
+                    "clock": {
+                        "title": "Годинник",
+                        "subtitle": "Годинник на екрані",
+                        "options": {
+                            "enableClock": "Увімкнути годинник",
+                            "isClock12HourFormat": "Використовувати 12-годинний формат",
+                            "clockShowSeconds": "Секунди",
+                            "clockHideWhenVideoPlaying": "Приховувати годинник під час перегляду відео"
+                        }
+                    },
+                    "disableEnlargingThumbnails": "Не збільшувати мініатюри",
+                    "enableShrinkingThumbnails": "Зменшувати мініатюри",
+                    "sortSidebarContents": {
+                        "title": "Порядок бокового меню",
+                        "subtitle": "Змініть порядок розділів меню",
+                        "moveUp": {
+                            "title": "Перемістити вище",
+                            "subtitle": "Перемістити цей елемент вище в боковому меню"
+                        },
+                        "moveDown": {
+                            "title": "Перемістити нижче",
+                            "subtitle": "Перемістити цей елемент нижче в боковому меню"
+                        },
+                        "addToSidebar": "Додати канал до бокового меню",
+                        "removeFromSidebar": "Видалити канал із бокового меню"
+                    }
+                }
+            },
+            "updater": {
+                "title": "Оновлення TizenTube Cobalt",
+                "menuSubtitle": "Керування оновленнями TizenTube Cobalt",
+                "versionSubtitle": "Поточна версія: {{version}}",
+                "options": {
+                    "checkForUpdates": "Перевірити оновлення",
+                    "checkForUpdatesOnStartup": "Перевіряти оновлення під час запуску"
+                },
+                "updateAvailable": {
+                    "title": "Доступне оновлення",
+                    "subtitle": "Доступна нова версія TizenTube Cobalt: {{latestVersion}}, поточна версія: {{currentVersion}}"
+                },
+                "releaseDate": "Дата випуску: {{date}}",
+                "updateNow": {
+                    "title": "Оновити зараз",
+                    "subtitle": "Натисніть, щоб завантажити найновішу версію."
+                },
+                "remindLater": {
+                    "title": "Нагадати пізніше",
+                    "subtitle": "Перевірити наявність оновлень пізніше."
+                },
+                "upToDate": {
+                    "title": "TizenTube оновлено",
+                    "subtitle": "Ви використовуєте найновішу версію TizenTube Cobalt ({{version}})."
+                },
+                "checkFailed": {
+                    "title": "Не вдалося перевірити оновлення TizenTube",
+                    "subtitle": "Не вдалося перевірити наявність оновлень."
+                },
+                "downloading": {
+                    "title": "Оновлення TizenTube",
+                    "subtitle": "Оновлення завантажується. Зачекайте..."
+                }
+            }
+        },
+        "ttSettings": {
+            "title": "Налаштування TizenTube",
+            "madeByText": "Створено Reis Can (reisxd) з ❤️",
+            "summary": "Відкрити налаштування TizenTube"
+        },
+        "supportTT": {
+            "title": "Підтримати TizenTube",
+            "subtitle": "❤️ Підтримайте TizenTube та його розвиток",
+            "content": {
+                "1": "Якщо вам подобається користуватися TizenTube і ви хочете підтримати його розвиток, зверніть увагу на такі варіанти:",
+                "2": "1. Поставте зірку репозиторію на GitHub, щоб підвищити його видимість.",
+                "3": "2. Поділіться TizenTube з іншими.",
+                "4": "Якщо ви хочете фінансово підтримати проєкт, можете зробити донат:",
+                "5": "- Buy Me A Coffee: https://www.buymeacoffee.com/reisxd (бажано)",
+                "6": "- GitHub Sponsors: https://github.com/sponsors/reisxd"
+            }
+        }
+    },
+    "welcomeMsg": {
+        "title": "Ласкаво просимо до TizenTube",
+        "subtitle": "Перейдіть у налаштування та натисніть «Налаштування TizenTube»."
+    },
+    "sponsorblock": {
+        "segments": {
+            "sponsor": "спонсорський сегмент",
+            "intro": "вступ",
+            "outro": "завершення",
+            "interaction": "заклик до взаємодії",
+            "selfpromo": "самореклама",
+            "preview": "повтор або прев’ю",
+            "filler": "відступ від теми",
+            "music_offtopic": "немузична частина",
+            "poi_highlight": "ключовий момент"
+        },
+        "toasts": {
+            "skipping": "Пропускається {{segment}}",
+            "notSkipping": "{{segment}} не пропускається (вже пропущено {{count}} разів)",
+            "skip": "Пропустити {{segment}}",
+            "skipToHighlight": "Перейти до ключового моменту"
+        }
+    },
+    "player": {
+        "playbackSpeed": {
+            "title": "Швидкість відтворення",
+            "button": "Керування швидкістю",
+            "fixStuttering": "Усунути підгальмовування (1.0001x)"
+        },
+        "miniPlayer": "Мініплеєр",
+        "pictureInPicture": "Картинка в картинці (PiP)",
+        "previous": "Попереднє відео",
+        "next": "Наступне відео",
+        "withTizenTube": "з TizenTube",
+        "share": {
+            "title": "Поділитися",
+            "button": "Поділитися",
+            "qrCodeScanMessage": "Відскануйте QR-код нижче, щоб поділитися цим відео."
+        },
+        "screenOff": "Вимкнути екран",
+        "chapters": {
+            "title": "Chapters",
+            "enterNudge": "To view chapters, press the up arrow button",
+            "navNudge": "Navigate between chapters",
+            "navNudgeA11y": "Press the left or right arrow button to navigate between chapters"
+        },
+        "queue": {
+            "title": "Queued Videos",
+            "clear": "Clear Queue"
+        },
+        "subtitles": {
+            "otherLanguages": "Other Languages"
+        }
+    },
+    "toasts": {
+        "videoAddedToQueue": "Додано до черги відтворення.",
+        "videoQueueCleared": "Чергу відтворення очищено.",
+        "sidebarContentsUpdated": {
+            "title": "Бокове меню оновлено",
+            "subtitle": "Вміст бокового меню оновлено."
+        },
+        "feedbackSent": "Відгук надіслано."
+    },
+    "videoMenu": {
+        "notInterested": "Не цікавить",
+        "dontRecommendChannel": "Не рекомендувати канал",
+        "play": "Play",
+        "saveToWatchLater": "Save to Watch Later",
+        "removeFromWatchLater": "Remove from Watch Later",
+        "saveToPlaylist": "Save to Playlist",
+        "addToQueue": "Add to Queue",
+        "goToChannel": "Go To Channel",
+        "videoOptions": "Video options"
+    },
+    "common": {
+        "back": "Back"
+    }
+}
