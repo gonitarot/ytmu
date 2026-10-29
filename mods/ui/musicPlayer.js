@@ -238,7 +238,7 @@ function tick2() {
   if (curId !== id || (t.title && curTitle !== t.title)) showTrack(t);
   step = 'upd';
 
-  dbg('ytm v5 cur=' + curId + ' id=' + id + ' title=' + t.title + ' th=' + t.thumbs.length + ' ' + (t.thumbs[0] && t.thumbs[0].url.slice(0, 60)) + ' err=' + t.metaErr + '\n' + t.keys + ' on=' + U.root.style.display + ' lrc=' + (lrc ? lrc.length : lrc) + ' art=' + U.art.style.backgroundImage.slice(0, 60) + ' inDom=' + document.body.contains(U.root));
+  dbg('ytm v5 cur=' + curId + ' id=' + id + ' title=' + t.title + ' th=' + t.thumbs.length + ' ' + (t.thumbs[0] && t.thumbs[0].url.slice(0, 60)) + ' err=' + t.metaErr + '\nDOM=' + String(window.__ytmDom()).replace(/\n/g, ' | ').slice(0, 300) + '\n' + t.keys + ' on=' + U.root.style.display + ' lrc=' + (lrc ? lrc.length : lrc) + ' art=' + U.art.style.backgroundImage.slice(0, 60) + ' inDom=' + document.body.contains(U.root));
   const cur = v.currentTime || 0;
   const dur = v.duration || t.duration || 0;
   U.fill.style.width = dur ? Math.min(100, (cur / dur) * 100) + '%' : '0';
@@ -262,3 +262,9 @@ function tick2() {
 }
 
 setInterval(tick, 250);
+
+// debug: expose native player text
+window.__ytmDom = function () {
+  const wp = document.querySelector('ytlr-watch-page');
+  return wp ? wp.innerText : 'no wp';
+};
