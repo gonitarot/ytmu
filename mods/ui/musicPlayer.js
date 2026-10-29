@@ -356,7 +356,7 @@ function tick2() {
   U.fill.style.width = dur ? Math.min(100, (cur / dur) * 100) + '%' : '0';
   U.t0.textContent = fmt(cur);
   U.t1.textContent = fmt(dur);
-  if (v.paused) U.st.textContent = '❚❚  Pausa';
+  U.st.textContent = v.paused ? '❚❚  Pausa' : '';
 
   if (lrc) {
     let idx = -1;
